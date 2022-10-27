@@ -37,47 +37,99 @@ job_json = {
         "max_concurrent_runs": 1,
         "tags": {
             "usage": "solacc_testing",
-            "group": "RCG"
+            "group": "CME"
         },
         "tasks": [
             {
-                "job_cluster_key": "CLV_cluster",
+                "job_cluster_key": "survival_cluster",
                 "libraries": [],
                 "notebook_task": {
-                    "notebook_path": f"1_Customer Lifetimes",
-                    "base_parameters": {
-                        "holdout days": "90"
-                    }
+                    "notebook_path": f"01_intro"
                 },
-                "task_key": "CLV_01",
+                "task_key": "survival_01",
                 "description": ""
             },
             {
-                "job_cluster_key": "CLV_cluster",
+                "job_cluster_key": "survival_cluster",
+                "libraries": [],
                 "notebook_task": {
-                    "notebook_path": f"2_Estimating Future Spend",
-                    "base_parameters": {
-                        "holdout days": "90"
-                    }
+                    "notebook_path": f"02_kaplan_meier"
                 },
-                "task_key": "CLV_02",
+                "task_key": "survival_02",
+                "description": "",
                 "depends_on": [
                     {
-                        "task_key": "CLV_01"
+                        "task_key": "survival_01"
+                    }
+                ]
+            },
+            {
+                "job_cluster_key": "survival_cluster",
+                "libraries": [],
+                "notebook_task": {
+                    "notebook_path": f"03_cox_proportional_hazards"
+                },
+                "task_key": "survival_03",
+                "description": "",
+                "depends_on": [
+                    {
+                        "task_key": "survival_02"
+                    }
+                ]
+            },
+            {
+                "job_cluster_key": "survival_cluster",
+                "libraries": [],
+                "notebook_task": {
+                    "notebook_path": f"04_accelerated_failure_time"
+                },
+                "task_key": "survival_04",
+                "description": "",
+                "depends_on": [
+                    {
+                        "task_key": "survival_03"
+                    }
+                ]
+            },
+            {
+                "job_cluster_key": "survival_cluster",
+                "libraries": [],
+                "notebook_task": {
+                    "notebook_path": f"05_customer_lifetime_value"
+                },
+                "task_key": "survival_05",
+                "description": "",
+                "depends_on": [
+                    {
+                        "task_key": "survival_04"
+                    }
+                ]
+            },
+            {
+                "job_cluster_key": "survival_cluster",
+                "libraries": [],
+                "notebook_task": {
+                    "notebook_path": f"06_conclusion_and_references"
+                },
+                "task_key": "survival_06",
+                "description": "",
+                "depends_on": [
+                    {
+                        "task_key": "survival_05"
                     }
                 ]
             }
         ],
         "job_clusters": [
             {
-                "job_cluster_key": "CLV_cluster",
+                "job_cluster_key": "survival_cluster",
                 "new_cluster": {
                     "spark_version": "10.4.x-cpu-ml-scala2.12",
                 "spark_conf": {
                     "spark.databricks.delta.formatCheck.enabled": "false"
                     },
-                    "num_workers": 2,
-                    "node_type_id": {"AWS": "i3.xlarge", "MSA": "Standard_DS3_v2", "GCP": "n1-highmem-4"},
+                    "num_workers": 8,
+                    "node_type_id": {"AWS": "i3.xlarge", "MSA": "Standard_DS3_v2", "GCP": "n1-highmem-4"}, # different from standard API
                     "custom_tags": {
                         "usage": "solacc_testing"
                     },
@@ -86,12 +138,10 @@ job_json = {
         ]
     }
 
-# COMMAND ----------
-
-dbutils.widgets.dropdown("run_job", "False", ["True", "False"])
-run_job = dbutils.widgets.get("run_job") == "True"
-NotebookSolutionCompanion().deploy_compute(job_json, run_job=run_job)
 
 # COMMAND ----------
 
+NotebookSolutionCompanion().deploy_compute(job_json)
+
+# COMMAND ----------
 
