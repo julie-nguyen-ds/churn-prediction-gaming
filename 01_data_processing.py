@@ -93,7 +93,7 @@ silver_tbl_name = 'silver_monthly_customers'
 # MAGIC 
 # MAGIC * Data Source:
 # MAGIC   * Dataset title: Game Customer Churn
-# MAGIC   * Dataset source URL: https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/Customer-Churn-Data.csv
+# MAGIC   * Dataset source URL: https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/data/Customer-Churn-Data.csv
 # MAGIC   * Dataset license: generated
 # MAGIC 
 # MAGIC * Since this is a relatively small dataset, we download it directly to the driver of our Spark Cluster. We then move it to the Databricks Filesystem (DBFS).
@@ -104,7 +104,7 @@ silver_tbl_name = 'silver_monthly_customers'
 
 # MAGIC %sh
 # MAGIC cd /databricks/driver 
-# MAGIC wget https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/Customer-Churn-Data.csv
+# MAGIC wget https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/data/Customer-Churn-Data.csv
 
 # COMMAND ----------
 
