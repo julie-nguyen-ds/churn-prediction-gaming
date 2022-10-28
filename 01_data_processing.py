@@ -70,7 +70,7 @@
 # Load libraries
 import shutil
 from pyspark.sql.functions import col, when
-from pyspark.sql.types import StructType,StructField,DoubleType, StringType, IntegerType
+from pyspark.sql.types import StructType, StructField, DoubleType, StringType, IntegerType
 
 # COMMAND ----------
 
@@ -82,9 +82,11 @@ data_path = '/home/{}/game-customer-churn'.format(user)
 driver_to_dbfs_path = '{}/Game-Customer-Churn.csv'.format(data_path) 
 bronze_tbl_path = '{}/bronze/'.format(data_path) 
 silver_tbl_path = '{}/silver/'.format(data_path) 
+inference_tbl_path = '{}/inference/'.format(data_path) 
 
-bronze_tbl_name = 'bronze_customers'
-silver_tbl_name = 'silver_monthly_customers'
+bronze_tbl_name = 'bronze_customer_features'
+silver_tbl_name = 'silver_customer_features'
+inference_tbl_name = 'new_customers_features'
 
 # COMMAND ----------
 
@@ -93,7 +95,8 @@ silver_tbl_name = 'silver_monthly_customers'
 # MAGIC 
 # MAGIC * Data Source:
 # MAGIC   * Dataset title: Game Customer Churn
-# MAGIC   * Dataset source URL: https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/data/Customer-Churn-Data.csv
+# MAGIC   * Dataset source URL: https://raw.githubusercontent.com/julie-nguyen-ds/churn-prediction-gaming/main/data/Customer-Churn-Data.csv
+# MAGIC   * Dataset batch inference source URL: https://raw.githubusercontent.com/julie-nguyen-ds/churn-prediction-gaming/main/data/New-Customer-Churn-Data.csv
 # MAGIC   * Dataset license: generated
 # MAGIC 
 # MAGIC * Since this is a relatively small dataset, we download it directly to the driver of our Spark Cluster. We then move it to the Databricks Filesystem (DBFS).
@@ -104,7 +107,8 @@ silver_tbl_name = 'silver_monthly_customers'
 
 # MAGIC %sh
 # MAGIC cd /databricks/driver 
-# MAGIC wget https://raw.githubusercontent.com/julie-nguyen-ds/customer-lifetime-value/main/data/Customer-Churn-Data.csv
+# MAGIC wget https://raw.githubusercontent.com/julie-nguyen-ds/churn-prediction-gaming/main/data/Customer-Churn-Data.csv
+# MAGIC wget https://raw.githubusercontent.com/julie-nguyen-ds/churn-prediction-gaming/main/data/New-Customer-Churn-Data.csv
 
 # COMMAND ----------
 
@@ -119,16 +123,26 @@ schema = StructType([
   StructField('PaymentMethod', StringType()),
   StructField('MonthlySpend', DoubleType()),
   StructField('TotalSpend', DoubleType()),
-  StructField('Churn', StringType())
+  StructField('TimeWindow', StringType()),
+  StructField('isActiveNextMonth', StringType()),
+  StructField('isActiveNextMonthPrediction', StringType())
   ])
 
 # COMMAND ----------
 
 # Load data
-dbutils.fs.cp('file:/databricks/driver/Customer-Churn-Data.csv.2', driver_to_dbfs_path)
+dbutils.fs.cp('file:/databricks/driver/Customer-Churn-Data.csv', driver_to_dbfs_path)
 bronze_df = spark.read.format('csv').schema(schema).option('header','true')\
                .load(driver_to_dbfs_path)
 display(bronze_df)
+
+# COMMAND ----------
+
+# Load inference data
+dbutils.fs.cp('file:/databricks/driver/New-Customer-Churn-Data.csv', driver_to_dbfs_path)
+inference_df = spark.read.format('csv').schema(schema).option('header','true')\
+               .load(driver_to_dbfs_path)
+display(inference_df)
 
 # COMMAND ----------
 
@@ -137,16 +151,19 @@ display(bronze_df)
 # MAGIC 
 # MAGIC * In an effort to keep our analysis focused, we will apply a few transformations to the original dataset.
 # MAGIC   * Transform churn column to Boolean
-# MAGIC   * Filter to internet subscribers with a month-to-month contract
 # MAGIC 
 # MAGIC * We refer to this curated dataset as the silver table
 
 # COMMAND ----------
 
 # Construct silver table
-silver_df = bronze_df.withColumn('ChurnBool', when(col('Churn') == 'Yes', 1).when(col('Churn') == 'No', 0).otherwise('Unknown'))\
-                     .drop('Churn')
+silver_df = bronze_df.withColumn('isActiveNextMonthBool', when(col('isActiveNextMonth') == 'Yes', 1).when(col('isActiveNextMonth') == 'No', 0).otherwise(0))\
+                     .drop('isActiveNextMonth')
 display(silver_df)
+
+# COMMAND ----------
+
+silver_df.groupBy('isActiveNextMonthBool').count().show()
 
 # COMMAND ----------
 
@@ -172,6 +189,7 @@ _ = spark.sql('USE {}'.format(database_name))
 # Drop any old delta lake files if needed (e.g. re-running this notebook with the same bronze_tbl_path and silver_tbl_path)
 shutil.rmtree('/dbfs'+bronze_tbl_path, ignore_errors=True)
 shutil.rmtree('/dbfs'+silver_tbl_path, ignore_errors=True)
+shutil.rmtree('/dbfs'+inference_tbl_path, ignore_errors=True)
 
 # COMMAND ----------
 
@@ -182,6 +200,11 @@ _ = bronze_df.write.format('delta').mode('overwrite').save(bronze_tbl_path)
 
 # Write out silver-level data to Delta lake
 _ = silver_df.write.format('delta').mode('overwrite').save(silver_tbl_path)
+
+# COMMAND ----------
+
+# Write out inference-level data to Delta lake
+_ = inference_df.withColumn("isActiveNextMonthPrediction", inference_df.isActiveNextMonthPrediction.cast('double')).write.format('delta').mode('overwrite').save(inference_tbl_path)
 
 # COMMAND ----------
 
@@ -206,8 +229,16 @@ _ = spark.sql('''
   CREATE TABLE `{}`.{}
   USING DELTA 
   LOCATION '{}'
-  '''.format(database_name,silver_tbl_name,silver_tbl_path))
+  '''.format(database_name, silver_tbl_name, silver_tbl_path))
 
+# COMMAND ----------
+
+# Create Inference table
+_ = spark.sql('''
+  CREATE TABLE `{}`.{}
+  USING DELTA 
+  LOCATION '{}'
+  '''.format(database_name, inference_tbl_name, inference_tbl_path))
 
 # COMMAND ----------
 
@@ -217,19 +248,24 @@ _ = spark.sql('''
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from bronze_customers
+# MAGIC select * from bronze_customer_features
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from silver_monthly_customers
+# MAGIC select * from silver_customer_features
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM new_customers_features
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Next Steps
+# MAGIC ## AutoML
 # MAGIC 
-# MAGIC * Now that our data is in place, we can proceed to analysis, starting with Kaplan-Meier
+# MAGIC * Now that our data is in place, we can proceed to starting an autoML experiment to predict customer churn.
 
 # COMMAND ----------
 

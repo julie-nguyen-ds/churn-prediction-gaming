@@ -49,3 +49,7 @@ df_profile = ProfileReport(df, title="Profiling Report", progress_bar=False, inf
 profile_html = df_profile.to_html()
 
 displayHTML(profile_html)
+
+# COMMAND ----------
+
+
