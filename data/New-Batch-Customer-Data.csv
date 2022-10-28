@@ -1,0 +1,19 @@
+CustomerID,Gender,WinLossRatio,Tenure,NumberActiveGames,Platform,PaymentMethod,MonthlySpend,TotalSpend
+7590-VHVEG,Female,0.119972379,1,1,Facebook,Electronic check,29.85,29.85
+5575-GNVDE,Male,0.460656583,34,2,GoogleAds,Mailed check,56.95,1889.5
+3668-QPYBK,Male,0.649000211,2,2,Facebook,Mailed check,53.85,108.15
+7795-CFOCW,Male,0.308645336,45,1,GoogleAds,Bank transfer (automatic),42.3,1840.75
+9237-HQITU,Female,0.139994264,2,2,Facebook,Electronic check,70.7,151.65
+9305-CDSKC,Female,0.97226957,8,4,Facebook,Electronic check,99.65,820.5
+1452-KIOVK,Male,0.304057922,22,4,Facebook,Credit card (automatic),89.1,1949.4
+6713-OKOMC,Female,0.140752582,10,1,Facebook,Mailed check,29.75,301.9
+7892-POOKP,Female,0.732494453,28,4,Facebook,Electronic check,104.8,3046.05
+6388-TABGU,Male,0.737198698,62,2,GoogleAds,Bank transfer (automatic),56.15,3487.95
+9763-GRSKD,Male,0.118809405,13,2,Facebook,Mailed check,49.95,587.45
+7469-LKBCI,Male,0.496445105,16,2,Instagram,Credit card (automatic),18.95,326.8
+8091-TTVAX,Male,0.228909652,58,4,GoogleAds,Credit card (automatic),100.35,5681.1
+0280-XJGEX,Male,0.739100156,49,4,Facebook,Bank transfer (automatic),103.7,5036.3
+5129-JLPIS,Male,0.433841113,25,2,Facebook,Electronic check,105.5,2686.05
+3655-SNQYZ,Female,0.936492357,69,4,Instagram,Credit card (automatic),113.25,7895.15
+8191-XWSZG,Female,0.652214111,52,2,GoogleAds,Mailed check,20.65,1022.95
+9959-WOFKT,Male,0.202653932,71,4,Instagram,Bank transfer (automatic),106.7,7382.25
