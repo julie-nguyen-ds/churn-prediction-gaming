@@ -70,7 +70,7 @@
 # Load libraries
 import shutil
 from pyspark.sql.functions import col, when
-from pyspark.sql.types import StructType,StructField,DoubleType, StringType, IntegerType
+from pyspark.sql.types import StructType, StructField, DoubleType, StringType, IntegerType
 
 # COMMAND ----------
 
@@ -84,7 +84,7 @@ bronze_tbl_path = '{}/bronze/'.format(data_path)
 silver_tbl_path = '{}/silver/'.format(data_path) 
 
 bronze_tbl_name = 'bronze_customers'
-silver_tbl_name = 'silver_monthly_customers'
+silver_tbl_name = 'silver_customers'
 
 # COMMAND ----------
 
@@ -125,7 +125,7 @@ schema = StructType([
 # COMMAND ----------
 
 # Load data
-dbutils.fs.cp('file:/databricks/driver/Customer-Churn-Data.csv.2', driver_to_dbfs_path)
+dbutils.fs.cp('file:/databricks/driver/Customer-Churn-Data.csv', driver_to_dbfs_path)
 bronze_df = spark.read.format('csv').schema(schema).option('header','true')\
                .load(driver_to_dbfs_path)
 display(bronze_df)
@@ -137,16 +137,19 @@ display(bronze_df)
 # MAGIC 
 # MAGIC * In an effort to keep our analysis focused, we will apply a few transformations to the original dataset.
 # MAGIC   * Transform churn column to Boolean
-# MAGIC   * Filter to internet subscribers with a month-to-month contract
 # MAGIC 
 # MAGIC * We refer to this curated dataset as the silver table
 
 # COMMAND ----------
 
 # Construct silver table
-silver_df = bronze_df.withColumn('ChurnBool', when(col('Churn') == 'Yes', 1).when(col('Churn') == 'No', 0).otherwise('Unknown'))\
+silver_df = bronze_df.withColumn('ChurnBool', when(col('Churn') == 'Yes', 1).when(col('Churn') == 'No', 0).otherwise(0))\
                      .drop('Churn')
 display(silver_df)
+
+# COMMAND ----------
+
+silver_df.groupBy('ChurnBool').count().show()
 
 # COMMAND ----------
 
@@ -206,7 +209,7 @@ _ = spark.sql('''
   CREATE TABLE `{}`.{}
   USING DELTA 
   LOCATION '{}'
-  '''.format(database_name,silver_tbl_name,silver_tbl_path))
+  '''.format(database_name, silver_tbl_name, silver_tbl_path))
 
 
 # COMMAND ----------
@@ -222,14 +225,19 @@ _ = spark.sql('''
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from silver_monthly_customers
+# MAGIC select * from silver_customers
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC DESCRIBE TABLE silver_customers
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Next Steps
+# MAGIC ## AutoML
 # MAGIC 
-# MAGIC * Now that our data is in place, we can proceed to analysis, starting with Kaplan-Meier
+# MAGIC * Now that our data is in place, we can proceed to starting an autoML experiment to predict customer churn.
 
 # COMMAND ----------
 
