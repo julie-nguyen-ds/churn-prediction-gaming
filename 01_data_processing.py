@@ -126,8 +126,21 @@ display(bronze_df)
 # COMMAND ----------
 
 # Load inference data
+# Define schema
+inference_schema = StructType([
+  StructField('CustomerID', StringType()),
+  StructField('Gender', StringType()),
+  StructField('WinLossRatio', DoubleType()),
+  StructField('Tenure', IntegerType()),
+  StructField('NumberActiveGames', DoubleType()),
+  StructField('Platform', StringType()),
+  StructField('PaymentMethod', StringType()),
+  StructField('MonthlySpend', DoubleType()),
+  StructField('TotalSpend', DoubleType()),
+  StructField('TimeWindow', StringType())
+])
 dbutils.fs.cp('file:/databricks/driver/New-Customer-Churn-Data.csv', new_data_driver_to_dbfs_path)
-inference_df = spark.read.format('csv').schema(schema).option('header','true')\
+inference_df = spark.read.format('csv').schema(inference_schema).option('header','true')\
                .load(new_data_driver_to_dbfs_path)
 display(inference_df)
 
@@ -161,6 +174,10 @@ _ = spark.sql('DROP DATABASE IF EXISTS {} CASCADE'.format(database_name))
 # Create database to house tables
 _ = spark.sql('CREATE DATABASE {}'.format(database_name))
 _ = spark.sql('USE {}'.format(database_name))
+
+# COMMAND ----------
+
+database_name
 
 # COMMAND ----------
 

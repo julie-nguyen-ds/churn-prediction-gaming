@@ -10,6 +10,9 @@
 
 # COMMAND ----------
 
+database_name = "dm_game_customer_churn_julie_nguyen"
+_ = spark.sql('USE {}'.format(database_name))
+
 model_name = "gaming_customer_churn_prediction_test_julie"
 
 # COMMAND ----------
@@ -70,12 +73,13 @@ display(table)
 
 import mlflow
 from pyspark.sql.functions import struct
+from pyspark.sql.types import StringType
 
 model_uri = f"models:/{model_name}/1"
 
 # create spark user-defined function for model prediction and uses it
 predict = mlflow.pyfunc.spark_udf(spark, model_uri, result_type="double")
-output_df = table.withColumn("isActiveNextMonthPrediction", predict(struct(*table.columns)))
+output_df = table.withColumn("Churn", predict(struct(*table.columns)))
 display(output_df)
 
 # COMMAND ----------
@@ -111,7 +115,3 @@ _ = output_df.write.format('delta').mode('overwrite').option("mergeSchema", "tru
 
 # MAGIC %sql
 # MAGIC SELECT * FROM new_customers_features
-
-# COMMAND ----------
-
-
