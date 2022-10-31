@@ -73,11 +73,8 @@ from pyspark.sql.functions import struct
 
 model_uri = f"models:/{model_name}/1"
 
-# create spark user-defined function for model prediction
+# create spark user-defined function for model prediction and uses it
 predict = mlflow.pyfunc.spark_udf(spark, model_uri, result_type="double")
-
-# COMMAND ----------
-
 output_df = table.withColumn("isActiveNextMonthPrediction", predict(struct(*table.columns)))
 display(output_df)
 
@@ -90,7 +87,7 @@ display(output_df)
 # MAGIC output_df.write.mode("overwrite").save(output_table_path)
 # MAGIC ```
 # MAGIC 
-# MAGIC ### (Optional) Write predictions to Unity Catalog
+# MAGIC ###### (Optional) Write predictions to Unity Catalog
 # MAGIC If you have access to any UC catalogs, you can also save predictions to UC by specifying a table in the format `<catalog>.<database>.<table>`.
 # MAGIC ```python
 # MAGIC output_table = "" # Example: "ml.batch-inference.gaming_customer_churn_prediction_test_julie"
@@ -108,4 +105,13 @@ user = dbutils.notebook.entry_point.getDbutils().notebook().getContext().userNam
 inference_tbl_path = f'/home/{user}/game-customer-churn/inference/'
 
 # To write to a unity catalog table, see instructions above
-_ = output_df.write.format('delta').mode('overwrite').save(inference_tbl_path)
+_ = output_df.write.format('delta').mode('overwrite').option("mergeSchema", "true").save(inference_tbl_path)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM new_customers_features
+
+# COMMAND ----------
+
+
