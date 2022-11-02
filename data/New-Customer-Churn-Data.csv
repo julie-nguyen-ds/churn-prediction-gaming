@@ -1,20 +1,20 @@
 ﻿CustomerID,Gender,WinLossRatio,Tenure,NumberActiveGames,Platform,PaymentMethod,MonthlySpend,TotalSpend,TimeWindow
-7398-LXGYX,Male,0.173521142,44,4,Facebook,Credit card (automatic),25,3651.35,202208-202210
-2823-LKABH,Female,0.870140653,18,4,Facebook,Bank transfer (automatic),75,1754.4,202208-202210
-8775-CEBBJ,Female,0.348506431,9,2,Facebook,Bank transfer (automatic),96,499.35,202208-202210
-0550-DCXLH,Male,0.604526778,13,2,Facebook,Mailed check,39,970.55,202208-202210
-9281-CEDRU,Female,0.438840921,68,2,Instagram,Bank transfer (automatic),54,4380.25,202208-202210
-2235-DWLJU,Female,0.597212382,6,1,Facebook,Electronic check,87,350.05,202208-202210
-0871-OPBXW,Female,0.22267641,2,2,Facebook,Mailed check,41,80.25,202208-202210
-3605-JISKB,Male,0.3038313,55,4,GoogleAds,Credit card (automatic),28,3344.1,202208-202210
-6894-LFHLY,Male,0.088351109,1,4,Facebook,Electronic check,36,111.75,202208-202210
-9767-FFLEM,Male,0.37080103,38,2,Facebook,Credit card (automatic),76,2701.25,202208-202210
-0639-TSIQW,Female,0.234349445,67,4,Facebook,Credit card (automatic),25,6911.25,202208-202210
-8456-QDAVC,Male,0.709538055,19,2,Facebook,Bank transfer (automatic),59,1554.1,202208-202210
-7750-EYXWZ,Female,0.414003379,12,1,GoogleAds,Electronic check,37,780.3,202208-202210
-2569-WGERO,Female,0.98263222,72,2,Instagram,Bank transfer (automatic),35,1454.4,202208-202210
-6840-RESVB,Male,0.942434165,24,4,GoogleAds,Mailed check,96,2086.5,202208-202210
-2234-XADUH,Female,0.757825862,72,4,GoogleAds,Credit card (automatic),55,7417.9,202208-202210
-4801-JZAZL,Female,0.779835603,11,1,Facebook,Electronic check,88,434.45,202208-202210
-8361-LTMKD,Male,0.29811046,4,4,Facebook,Mailed check,61,367.6,202208-202210
-3186-AJIEK,Male,0.36375298,66,2,Instagram,Bank transfer (automatic),12,6856.5,202208-202210
+7398-LXGYX,Male,0.173521142,44,4,Facebook,Credit card (automatic),400,3651.35,202208-202210
+2823-LKABH,Female,0.870140653,18,4,Facebook,Bank transfer (automatic),133.3333333,1754.4,202208-202210
+8775-CEBBJ,Female,0.348506431,9,2,Facebook,Bank transfer (automatic),104.1666667,499.35,202208-202210
+0550-DCXLH,Male,0.604526778,13,2,Facebook,Mailed check,256.4102564,970.55,202208-202210
+9281-CEDRU,Female,0.438840921,68,2,Instagram,Bank transfer (automatic),185.1851852,4380.25,202208-202210
+2235-DWLJU,Female,0.597212382,6,1,Facebook,Electronic check,114.9425287,350.05,202208-202210
+0871-OPBXW,Female,0.22267641,2,2,Facebook,Mailed check,243.902439,80.25,202208-202210
+3605-JISKB,Male,0.3038313,55,4,GoogleAds,Credit card (automatic),357.1428571,3344.1,202208-202210
+6894-LFHLY,Male,0.088351109,1,4,Facebook,Electronic check,277.7777778,111.75,202208-202210
+9767-FFLEM,Male,0.37080103,38,2,Facebook,Credit card (automatic),131.5789474,2701.25,202208-202210
+0639-TSIQW,Female,0.234349445,67,4,Facebook,Credit card (automatic),400,6911.25,202208-202210
+8456-QDAVC,Male,0.709538055,19,2,Facebook,Bank transfer (automatic),169.4915254,1554.1,202208-202210
+7750-EYXWZ,Female,0.414003379,12,1,GoogleAds,Electronic check,270.2702703,780.3,202208-202210
+2569-WGERO,Female,0.98263222,72,2,Instagram,Bank transfer (automatic),285.7142857,1454.4,202208-202210
+6840-RESVB,Male,0.942434165,24,4,GoogleAds,Mailed check,104.1666667,2086.5,202208-202210
+2234-XADUH,Female,0.757825862,72,4,GoogleAds,Credit card (automatic),181.8181818,7417.9,202208-202210
+4801-JZAZL,Female,0.779835603,11,1,Facebook,Electronic check,113.6363636,434.45,202208-202210
+8361-LTMKD,Male,0.29811046,4,4,Facebook,Mailed check,163.9344262,367.6,202208-202210
+3186-AJIEK,Male,0.36375298,66,2,Instagram,Bank transfer (automatic),833.3333333,6856.5,202208-202210
