@@ -30,14 +30,15 @@ import pandas as pd
 
 # Create temp directory to download input data from MLflow
 input_temp_dir = os.path.join(os.environ["SPARK_LOCAL_DIRS"], "tmp", str(uuid.uuid4())[:8])
+
 os.makedirs(input_temp_dir)
 
 
 # Download the artifact and read it into a pandas DataFrame
 input_client = MlflowClient()
-input_data_path = input_client.download_artifacts("1a4ae0ec424b4b6abca1053529c45162", "data", input_temp_dir)
+input_data_path = input_client.download_artifacts("4e9e5d3628514ad288e8ee83737856ea", "data", input_temp_dir)
 
-df_loaded = pd.read_parquet(os.path.join(input_data_path, "../../../Downloads/training_data"))
+df_loaded = pd.read_parquet(os.path.join(input_data_path, "training_data"))
 # Delete the temp data
 shutil.rmtree(input_temp_dir)
 
@@ -68,6 +69,10 @@ col_selector = ColumnSelector(supported_cols)
 # MAGIC ### Numerical columns
 # MAGIC 
 # MAGIC Missing values for numerical columns are imputed with mean by default.
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 
@@ -111,18 +116,18 @@ preprocessor = ColumnTransformer(transformers, remainder="passthrough", sparse_t
 # COMMAND ----------
 
 # AutoML completed train - validation - test split internally and used _automl_split_col_fc4d to specify the set
-split_train_df = df_loaded.loc[df_loaded._automl_split_col_fc4d == "train"]
-split_val_df = df_loaded.loc[df_loaded._automl_split_col_fc4d == "val"]
-split_test_df = df_loaded.loc[df_loaded._automl_split_col_fc4d == "test"]
+split_train_df = df_loaded.loc[df_loaded._automl_split_col_2a67 == "train"]
+split_val_df = df_loaded.loc[df_loaded._automl_split_col_2a67 == "val"]
+split_test_df = df_loaded.loc[df_loaded._automl_split_col_2a67 == "test"]
 
 # Separate target column from features and drop _automl_split_col_fc4d
-X_train = split_train_df.drop([target_col, "_automl_split_col_fc4d"], axis=1)
+X_train = split_train_df.drop([target_col, "_automl_split_col_2a67"], axis=1)
 y_train = split_train_df[target_col]
 
-X_val = split_val_df.drop([target_col, "_automl_split_col_fc4d"], axis=1)
+X_val = split_val_df.drop([target_col, "_automl_split_col_2a67"], axis=1)
 y_val = split_val_df[target_col]
 
-X_test = split_test_df.drop([target_col, "_automl_split_col_fc4d"], axis=1)
+X_test = split_test_df.drop([target_col, "_automl_split_col_2a67"], axis=1)
 y_test = split_test_df[target_col]
 
 # COMMAND ----------
@@ -140,6 +145,21 @@ import lightgbm
 from lightgbm import LGBMClassifier
 
 help(LGBMClassifier)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC If we want to change the base function predict of our registered model, we can wrap our model into a class and re-implement the predict function.
+
+# COMMAND ----------
+
+class LgbmModelWrapper(mlflow.pyfunc.PythonModel):
+  def __init__(self, model):
+    self.model = model
+    
+  def predict(self, context, model_input):
+    return self.model.predict_proba(model_input)[:,1]
+ 
 
 # COMMAND ----------
 
@@ -307,7 +327,7 @@ model
 # COMMAND ----------
 
 # Set this flag to True and re-run the notebook to see the SHAP plots
-shap_enabled = False
+shap_enabled = True
 
 # COMMAND ----------
 

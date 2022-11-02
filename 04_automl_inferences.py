@@ -76,6 +76,7 @@ from pyspark.sql.functions import struct
 from pyspark.sql.types import StringType
 
 model_uri = f"models:/{model_name}/1"
+model = mlflow.sklearn.load_model(model_uri)
 
 # create spark user-defined function for model prediction and uses it
 predict = mlflow.pyfunc.spark_udf(spark, model_uri, result_type="double")
