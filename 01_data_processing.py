@@ -14,13 +14,11 @@
 # MAGIC %md
 # MAGIC ## Overview
 # MAGIC 
-# MAGIC * Survival Analysis is a collection of statistical methods used to examine and predict the time until an event of interest occurs. This form of analysis originated in Healthcare, with a focus on time-to-death. Since then, Survival Analysis has been successfully applied to use cases in virtually every industry around the globe. 
+# MAGIC * In this notebook, we will prepare a publicly available dataset for analysis. This data will then serve as the basis for some exploratory analysis and modeling intended to assist us in understanding and predicting customer churn.
 # MAGIC 
-# MAGIC * Use Case Examples
+# MAGIC * Advanced Use Case Examples
 # MAGIC   * `Customer Retention:` It is widely accepted that the cost of retention is lower than the cost of acquisition.  With the event of interest being a service cancellation, Telco companies can more effectively manage churn by using Survival Analysis to better predict at what point in time specific customers are likely to be in risk.
-# MAGIC   
-# MAGIC   * `Hardware Failures:` The quality of experience a customer has with your products and services plays a key role in the decision to renew or cancel. The network itself is at the epicenter of this experience. With time to failure as the event of interest, Survival Analysis can be used to predict when hardware will need to be repaired or replaced.
-# MAGIC   
+# MAGIC 
 # MAGIC   * `Device and Data Plan Upgrades:` There are key moments in a customer's lifecycle when changes to their plan take place. With the event of interest being a plan change, Survival Analysis can be used to predict when such a change will take place and then actions can be taken to positively influence the selected products or services.
 
 # COMMAND ----------
